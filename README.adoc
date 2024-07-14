@@ -49,6 +49,16 @@ The official site is located at:
 
 * http://iho-ohi.net/S32/
 
+The Glossarist dataset incorporates all available languages, including:
+
+* English
+* French
+* Spanish
+* Chinese
+* Indonesian
+
+NOTE: If additional languages become available, minor code change is needed.
+
 Glossarist Agent uses a caching mechanism to efficiently manage downloads and
 reduce unnecessary network requests.
 
