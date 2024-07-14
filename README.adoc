@@ -1,0 +1,149 @@
+= Glossarist Agent
+
+image:https://img.shields.io/gem/v/glossarist-agent.svg["Gem Version", link="https://rubygems.org/gems/glossarist-agent"]
+image:https://github.com/relaton/glossarist-agent/workflows/rake/badge.svg["Build Status", link="https://github.com/relaton/glossarist-agent/actions?workflow=rake"]
+image:https://codeclimate.com/github/relaton/glossarist-agent/badges/gpa.svg["Code Climate", link="https://codeclimate.com/github/relaton/glossarist-agent"]
+
+== Purpose
+
+The Glossarist Agent is a Ruby gem designed to retrieve remotely located concepts.
+
+Currently, it allows the bulk retrieval of the IHO S-32 Hydrographic Dictionary
+into the Glossarist format.
+
+
+== Installation
+
+Add this line to your application's `Gemfile`:
+
+[source,ruby]
+----
+gem 'glossarist-agent'
+----
+
+And then execute:
+
+[source,shell]
+----
+$ bundle install
+----
+
+Or install it yourself as:
+
+[source,shell]
+----
+$ gem install glossarist-agent
+----
+
+
+== Usage
+
+=== Downloading IHO S-32 Hydrographic Dictionary data
+
+==== General
+
+The Glossarist Agent can download and process IHO (International Hydrographic
+Organization) S-32 Hydrographic Dictionary data from available CSV files.
+
+The official site is located at:
+
+* http://iho-ohi.net/S32/
+
+Glossarist Agent uses a caching mechanism to efficiently manage downloads and
+reduce unnecessary network requests.
+
+To retrieve these concepts and generate a Glossarist dataset, use the following
+command:
+
+[source,shell]
+----
+$ glossarist-agent iho retrieve-concepts
+----
+
+This command performs the following actions:
+
+. Downloads the required CSV files from IHO sources.
+. Caches the downloaded files for future use.
+. Processes the CSV data to generate a Glossarist-compatible dataset.
+
+==== Command Options
+
+[source,shell]
+----
+$ glossarist-agent iho help retrieve-concepts
+Usage:
+  glossarist-agent iho retrieve-concepts
+
+Options:
+  -o, [--output=OUTPUT]                        # Directory to output generated files
+                                               # Default: ./output
+  -c, [--cache=CACHE]                          # Directory to store cached files
+                                               # Default: ~/.glossarist-agent/cache
+      [--fetch], [--no-fetch], [--skip-fetch]  # Fetch new data (default: true)
+                                               # Default: true
+
+Download IHO CSV files and generate concepts
+----
+
+`--output`:: Specifies the directory where the generated Glossarist dataset will be saved. Default is `./output`.
+`--cache`:: Sets the directory for storing cached files. Default is `~/.glossarist-agent/cache`.
+`--fetch`:: Controls whether to fetch new data or use existing cached data. Default is `true`.
+
+[example]
+====
+The following command saves the IHO S-32 Glossarist dataset at
+`./iho-s32-glossarist` and prioritizes using the existing cache without
+communicating with the server.
+
+[source,sh]
+----
+$ glossarist-agent iho retrieve-concepts --no-fetch -o iho-s32-glossarist
+----
+====
+
+
+=== Caching mechanism
+
+The Glossarist Agent employs a sophisticated caching system to optimize
+performance and reduce unnecessary downloads:
+
+. Downloaded files are stored in the specified cache directory.
+. Each cached file is associated with metadata, including the download time and ETag.
+. When fetching data, the agent checks:
+.. If the cached file exists and is within the expiry period (default 7 days).
+.. If the server's ETag matches the cached ETag.
+. If either condition is not met, the agent downloads a fresh copy of the file.
+
+This approach ensures that the agent always works with up-to-date data while minimizing network usage.
+
+=== Generating Glossarist Dataset
+
+After downloading and caching the IHO CSV files, the agent processes the data to generate a Glossarist-compatible dataset:
+
+. It parses the CSV files to extract concept information.
+. The extracted data is transformed into the Glossarist data model.
+. The resulting dataset is saved in the specified output directory.
+
+This generated dataset can then be used with other Glossarist tools for further processing or integration into concept management systems.
+
+== Features
+
+* Automated downloading and caching of IHO CSV files
+* ETag-based cache validation
+* Customizable cache expiry period
+* Generation of Glossarist-compatible datasets from IHO data
+* Command-line interface for easy integration into workflows
+
+== Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`.
+
+
+== License
+
+Copyright Ribose.
+
+The gem is available as open source under the terms of the
+https://opensource.org/licenses/MIT[MIT License].
